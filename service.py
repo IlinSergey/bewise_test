@@ -28,8 +28,7 @@ def prepare_quize_data(data: Dict[str, any]) -> Quize:
     return quize
 
 
-async def get_quiz(question: int):
-
+async def get_quiz(question: int) -> Quize:
     async with aiohttp.ClientSession() as session:
         url = f'https://jservice.io/api/random?count={question}'
         async with session.get(url=url) as response:
@@ -38,10 +37,6 @@ async def get_quiz(question: int):
                 for question_data in result:
                     quize = prepare_quize_data(data=question_data)
                     if save_quize(quize_data=quize):
-                        print(quize)
+                        return quize
                     else:
                         await get_quiz(1)
-
-
-if __name__ == '__main__':
-    asyncio.run(get_quiz(5))
