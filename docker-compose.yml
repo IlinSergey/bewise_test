@@ -1,0 +1,27 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my_fastapi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DB: ${DB}
+    command: bash -c "python database.py && uvicorn main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  postgres_data:
